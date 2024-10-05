@@ -23,63 +23,7 @@ def spherical_to_cartesian(ra, dec, distance):
     
     return x, y, z
 
-# Funktion zur Erstellung einer 3D-Sternkarte mit einem Planeten in der Mitte
-def plot_3d_star_map_with_planet(ra, dec, parallax, exoplanet_name):
-    # Parallaxe in Distanz umrechnen (in Parsecs)
-    distance = 1000 / parallax  # Umrechnung der Parallaxwerte
-
-    # Filtere sehr große Distanzen heraus (realistische Grenzen setzen)
-    valid_indices = np.isfinite(distance) & (distance < 5000) & (distance > 0)
-    ra = ra[valid_indices]
-    dec = dec[valid_indices]
-    distance = distance[valid_indices]
-
-    # Umrechnung der Kugelkoordinaten in kartesische Koordinaten
-    x, y, z = spherical_to_cartesian(ra, dec, distance)
-
-    # 3D-Abbildung erstellen
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
-
-    # Sterne als Punktwolke darstellen
-    ax.scatter(x, y, z, s=10, c='white', alpha=0.8)
-
-    # Hintergrund und Titel setzen
-    ax.set_facecolor('black')
-    ax.set_title(f'3D Star Map from {exoplanet_name}', color='white')
-
-    # Achsen entfernen für eine klare Ansicht
-    ax.set_axis_off()
-
-    # Einen größeren Planeten in der Mitte platzieren
-    u, v = np.mgrid[0:2*np.pi:50j, 0:np.pi:25j]
-    r_planet = 200  # Größe des Planeten anpassen
-    x_planet = r_planet * np.cos(u) * np.sin(v)
-    y_planet = r_planet * np.sin(u) * np.sin(v)
-    z_planet = r_planet * np.cos(v)
-
-    # Planeten in der Mitte plotten
-    ax.plot_surface(x_planet, y_planet, z_planet, color='blue', alpha=0.7, rstride=5, cstride=5)
-
-    # Achsenlimits für bessere Darstellung setzen
-    ax.set_xlim([-2000, 2000])
-    ax.set_ylim([-2000, 2000])
-    ax.set_zlim([-2000, 2000])
-
-    # Überflüssige Ränder entfernen
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-    # Fenster maximieren
-    mng = plt.get_current_fig_manager()
-    try:
-        mng.window.state('zoomed')  # Maximiert das Fenster auf macOS
-    except:
-        mng.full_screen_toggle()  # Alternativ auf Linux/Windows
-
-    # Interaktive Rotation ermöglichen
-    plt.show()
-
-def plot_3d_star_map_with_planet2(drawobject: (DrawObject)):
+def plot_3d_star_map_with_planet(drawobject: (DrawObject)):
 
     # 3D-Abbildung erstellen
     fig = plt.figure(figsize=(10, 8))
@@ -163,7 +107,7 @@ def on_select_exoplanet_3d():
     ra, dec, parallax = fetch_gaia_stars_3d(exoplanet_ra, exoplanet_dec, radius=10)
 
     # 3D-Sternkarte erstellen
-    plot_3d_star_map_with_planet2(run_api(exoplanet_ra, exoplanet_dec))
+    plot_3d_star_map_with_planet(run_api(exoplanet_ra, exoplanet_dec))
 
 # Exoplanetendaten aus der CSV-Datei laden
 file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
