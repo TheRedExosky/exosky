@@ -4,10 +4,6 @@ Some general calculation work for the simulation.
 
 import numpy as np
 
-import pandas as pd
-import seaborn as sns
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
 from astropy.coordinates import Angle
 import astropy.units as u
 

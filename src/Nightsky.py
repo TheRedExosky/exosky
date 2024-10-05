@@ -10,13 +10,9 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from astroquery.gaia import Gaia
 from matplotlib.colors import to_rgba
 import pandas as pd
 import sys
-from astropy.coordinates import Angle
-import astropy.units as u
 from typing import List
 
 from api import StarObject, fetch_api
