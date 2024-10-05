@@ -54,7 +54,7 @@ def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
         size_with_luminosity = 10 * obj.luminosity # Größe proportional zur Helligkeit
 
         # Objekt als Punktwolke darstellen
-        ax.scatter(obj.x, obj.y, obj.z, s=size_with_luminosity, c=[color_with_luminosity])
+        ax.scatter(obj.x, obj.y, obj.z, s=obj.radius * 0.00000001, c=[color_with_luminosity])
 
     # Hintergrund und Titel setzen
     ax.set_facecolor('black')
