@@ -1,3 +1,7 @@
+"""
+Everything related to fetching star data from AstroQuery.
+"""
+
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 

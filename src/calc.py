@@ -1,3 +1,7 @@
+"""
+Some general calculation work for the simulation.
+"""
+
 import numpy as np
 
 import pandas as pd
@@ -9,7 +13,7 @@ import astropy.units as u
 
 def spherical_to_cartesian(ra, dec, distance):
     """
-    Convert `ra` and `dec` coordinates to cartesian
+    Convert `ra` and `dec` coordinates to cartesian.
     """
     ra_rad = np.deg2rad(ra)
     dec_rad = np.deg2rad(dec)
@@ -23,20 +27,27 @@ def spherical_to_cartesian(ra, dec, distance):
 
 
 def hms_to_degrees(ra_hms):
-    """ convert RA in HMS format to decimal degrees """
+    """
+    Convert RA in HMS format to decimal degrees.
+    """
     ra_angle = Angle(ra_hms, unit=u.hour)
     return ra_angle.deg
 
 
 def dms_to_degrees(dec_dms):
-    """ convert DEC in DMS format to decimal degrees """
+    """
+    Convert DEC in DMS format to decimal degrees.
+    """
     dec_angle = Angle(dec_dms, unit=u.deg)
     return dec_angle.deg
 
 
 def temperature_to_color(temperature):
-    """ Temperatur [K] zu Lichtwellenlänge [nm] """
+    """
+    Temperatur [K] zu Lichtwellenlänge [nm]
+    """
     return 0.002898 / temperature * 1000000000
+
 
 def wavelength_to_rgb(wavelength):
     gamma = 0.8

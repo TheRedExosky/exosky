@@ -1,3 +1,8 @@
+"""
+Main Entry Point to the whole simulation.
+Just run this as `python3 NightSky.py`.
+"""
+
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -19,7 +24,7 @@ from calc import *
 
 def plot_stars(stars: [StarObject]):
     """
-    Plot all stars, retrieved by the API
+    Plot all stars, retrieved by the API.
     """
     print("Amount start", len(stars))
 
@@ -50,6 +55,9 @@ def plot_stars(stars: [StarObject]):
             min_lum = star.luminosity
 
     def translate_clamp(value, min_lum, max_lum):
+        """
+        Clamp values from `min_lum` to `max_lum` to 0 - 1.
+        """
         nom = (value - min_lum)
         denom = (max_lum - min_lum)
         if denom == 0.0:
@@ -93,7 +101,7 @@ def plot_stars(stars: [StarObject]):
 
 def select_exoplanet():
     """
-    select and exoplanet and parse `ra` and `dec` data
+    Select and exoplanet and parse `ra` and `dec` data.
     """
     index_name = 0
     index_ra = 28
@@ -120,7 +128,9 @@ def select_exoplanet():
 
 
 def run_simulation():
-    """ run star simulation """
+    """
+    Run star simulation
+    """
     ra, dec = select_exoplanet()
     plot_stars(fetch_api(ra, dec))
 
