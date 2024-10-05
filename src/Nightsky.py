@@ -71,7 +71,12 @@ def plot_stars(stars: List[StarObject]):
         wavelength = temperature_to_color(star.temperature)
         rgb_value = wavelength_to_rgb(wavelength)
         normalized_rgb = tuple([x / 255.0 for x in rgb_value])
-        color_with_luminosity = to_rgba('white', alpha=alpha_clamp(star.luminosity, min_lum, max_lum))
+
+        alpha_clamp_value = alpha_clamp(star.luminosity, min_lum, max_lum) 
+        if not alpha_clamp_value:
+            alpha_clamp_value = 0
+
+        color_with_luminosity = to_rgba('white', alpha=alpha_clamp_value)
 
         # display object as a point cloud
         ax.scatter(star.x, star.y, star.z, s=size, c=[color_with_luminosity])
