@@ -19,10 +19,6 @@ def spherical_to_cartesian(ra, dec, distance):
     
     return x, y, z
 
-
-
-
-
 # Beispiel-Datenrahmen erstellen
 data = {
     'dist': [1.0, 2.0, 3.0],
@@ -128,3 +124,58 @@ radius = 6.96e8  # Radius der Sonne
 
 # Berechnung der Luminosität für jeden Eintrag im DataFrame
 df['luminositaet'] = df.apply(lambda row: berechne_luminositaet(temperatur, radius), axis=1)
+
+# Temperatur [K] zu Lichtwellenlänge [nm]
+def temperature_to_color(temperature):
+    return 0.002898 / temperature * 1000000000
+
+# Lichtwellenlänge [nm] zu Temperatur [K]
+# umgeformt genau dieselbe Formel
+def color_to_temperature(light_wave_length):
+    return temperature_to_color(light_wave_length)
+
+def wavelength_to_rgb(wavelength):
+    gamma = 0.8
+    intensity_max = 255
+    r = g = b = 0
+    
+    if 380 <= wavelength <= 440:
+        r = -(wavelength - 440) / (440 - 380)
+        g = 0.0
+        b = 1.0
+    elif 440 < wavelength <= 490:
+        r = 0.0
+        g = (wavelength - 440) / (490 - 440)
+        b = 1.0
+    elif 490 < wavelength <= 510:
+        r = 0.0
+        g = 1.0
+        b = -(wavelength - 510) / (510 - 490)
+    elif 510 < wavelength <= 580:
+        r = (wavelength - 510) / (580 - 510)
+        g = 1.0
+        b = 0.0
+    elif 580 < wavelength <= 645:
+        r = 1.0
+        g = -(wavelength - 645) / (645 - 580)
+        b = 0.0
+    elif 645 < wavelength <= 780:
+        r = 1.0
+        g = 0.0
+        b = 0.0
+    else:
+        r = g = b = 0.0  # Wavelength outside the visible spectrum
+
+    # Let the intensity fall off near the vision limits
+    if 380 <= wavelength <= 420:
+        factor = 0.3 + 0.7 * (wavelength - 380) / (420 - 380)
+    elif 645 < wavelength <= 780:
+        factor = 0.3 + 0.7 * (780 - wavelength) / (780 - 645)
+    else:
+        factor = 1.0
+
+    r = int(intensity_max * (r * factor) ** gamma)
+    g = int(intensity_max * (g * factor) ** gamma)
+    b = int(intensity_max * (b * factor) ** gamma)
+
+    return (r, g, b)
