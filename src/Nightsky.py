@@ -9,19 +9,46 @@ from mpl_toolkits.mplot3d import Axes3D
 from astroquery.gaia import Gaia
 from matplotlib.colors import to_rgba
 import pandas as pd
+import sys
+
 from api import DrawObject, run_api
 
-def plot_3d_star_map_with_planet(drawobject: (DrawObject)):
+def plot_3d_star_map_with_planet(drawobjects: [DrawObject]):
     # 3D-Abbildung erstellen
     fig = plt.figure(figsize=(10, 8))
 
     ax = fig.add_subplot(111, projection='3d')
 
+    print(len(drawobjects))
+
+    # clamp lumonisoty from 0 to 1
+    min_lum = sys.float_info.max
+    max_lum = sys.float_info.min
+    for obj in drawobjects:
+        if obj.luminosity > max_lum:
+            max_lum = obj.luminosity
+            print("new max lum", max_lum)
+        if obj.luminosity < min_lum:
+            min_lum = obj.luminosity
+            print("new min lum", min_lum)
+
+    def translate_clamp(value, min_lum, max_lum):
+        nom = (value - min_lum)
+        denom = (max_lum - min_lum)
+        if denom == 0.0:
+            return 1.0
+        else:
+            return nom / denom
+
+    print("Min lum", min_lum)
+    print("Max lum", max_lum)
+    
     # Durch die Objekte in drawobject iterieren und für jedes die Helligkeit berücksichtigen
-    for obj in drawobject:
+    for obj in drawobjects:
+        print("clamped", translate_clamp(obj.luminosity,min_lum, max_lum))
         # Helligkeit des Objekts beeinflusst seine Darstellung
-        color_with_luminosity = to_rgba('white', alpha=obj.brightness)  # Helligkeit für Transparenz
-        size_with_luminosity = 10 * obj.brightness  # Größe proportional zur Helligkeit
+        color_with_luminosity = to_rgba('white', alpha=translate_clamp(obj.luminosity,min_lum, max_lum))  # Helligkeit für Transparenz
+        size_with_luminosity = 10 * obj.luminosity # Größe proportional zur Helligkeit
 
         # Objekt als Punktwolke darstellen
         ax.scatter(obj.x, obj.y, obj.z, s=size_with_luminosity, c=[color_with_luminosity])
@@ -76,9 +103,6 @@ def on_select_exoplanet_3d():
     exoplanet_name = selected_exoplanet['75 Cet b']  # Exoplanetenname
     exoplanet_ra = selected_exoplanet['38.0391598']  # Dezimal-RA-Spalte
     exoplanet_dec = selected_exoplanet['-1.0350269']  # Dezimal-Dec-Spalte
-
-    # Gaia-Sterne um die Koordinaten des Exoplaneten abfragen
-    ra, dec, parallax = fetch_gaia_stars_3d(exoplanet_ra, exoplanet_dec, radius=10)
 
     # 3D-Sternkarte erstellen
     plot_3d_star_map_with_planet(run_api(exoplanet_ra, exoplanet_dec))
