@@ -96,6 +96,11 @@ def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
         mng.full_screen_toggle()  # Alternativ auf Linux/Windows
 
     # Interaktive Rotation ermöglichen
+    selected_index = exoplanet_listbox.curselection()
+    selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
+    exoplanet_name = selected_exoplanet[0]
+
+    fig.suptitle(exoplanet_name, color="white")
     plt.show()
 
 
