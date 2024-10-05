@@ -56,7 +56,7 @@ def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
         rgb_value = wavelength_to_rgb(wavelength)
         normalized_rgb = tuple([x / 255.0 for x in rgb_value])
 
-        color_with_luminosity = to_rgba('normalized_rgb', alpha=translate_clamp(obj.luminosity, min_lum, max_lum))
+        color_with_luminosity = to_rgba(normalized_rgb, alpha=translate_clamp(obj.luminosity, min_lum, max_lum))
 
         # Objekt als Punktwolke darstellen
         ax.scatter(obj.x, obj.y, obj.z, s=size, c=[color_with_luminosity])
