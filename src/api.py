@@ -17,10 +17,10 @@ class DrawObject():
     z: float
     brightness: float
 
-def run_api():
+def run_api(ra=280, dec=-60):
     """ do things! """
 
-    coord = SkyCoord(ra=280, dec=-60, unit=(u.degree, u.degree), frame='icrs')
+    coord = SkyCoord(ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
     width = u.Quantity(0.1, u.deg)
     height = u.Quantity(0.1, u.deg)
 
@@ -42,6 +42,7 @@ def run_api():
         drawobject = DrawObject(x, y, z, brightness)
         objs.append(drawobject)
     return objs
+
 
 # obs = run_api()
 # print(obs)
