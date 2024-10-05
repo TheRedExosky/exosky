@@ -42,7 +42,7 @@ def run_api(ra=280, dec=-60):
         bp_rp = row['bp_rp']
         temp = row['teff_gspphot']
 
-        if temp:
+        if not(temp):
             temp = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
 
         # Calculate distance
