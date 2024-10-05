@@ -103,20 +103,25 @@ def select_exoplanet():
         messagebox.showwarning("Selection Error", "Please select an exoplanet.")
         return
 
-    # Get details of the selected exoplanet
     selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
-    exoplanet_name = selected_exoplanet[index_name]  # Get exoplanet name
-    print(exoplanet_name)
+    exoplanet_name = selected_exoplanet[index_name]
+    print("selected planet", exoplanet_name)
 
-    exoplanet_ra_hms = selected_exoplanet[index_ra]  # RA column in HMS format
-    exoplanet_dec_dms = selected_exoplanet[index_dec]  # DEC column in DMS format
+    # convert to hms
+    exoplanet_ra_hms = selected_exoplanet[index_ra]
+    exoplanet_dec_dms = selected_exoplanet[index_dec]
     
-    # Conversion to decimal values
-    exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)  # RA to decimal degrees
-    exoplanet_dec = dms_to_degrees(exoplanet_dec_dms)  # DEC to decimal degrees
+    # convert to decimal values
+    exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)
+    exoplanet_dec = dms_to_degrees(exoplanet_dec_dms)
 
-    # Create 3D star map
-    plot_sky(fetch_api(exoplanet_ra, exoplanet_dec))
+    return exoplanet_ra,exoplanet_dec
+
+
+def run_simulation():
+    """ run star simulation """
+    ra, dec = select_exoplanet()
+    plot_stars(fetch_api(ra, dec))
 
 
 if __name__ == "__main__":
@@ -135,7 +140,7 @@ if __name__ == "__main__":
         exoplanet_listbox.insert(tk.END, name)
 
     # add start button
-    select_button = tk.Button(root, text="Show stars ⭐", command=select_exoplanet)
+    select_button = tk.Button(root, text="Show stars ⭐", command=run_simulation)
     select_button.pack(pady=10)
 
     root.bind('<Escape>', lambda e: root.destroy())
