@@ -9,13 +9,16 @@ from dataclasses import dataclass
 
 from calc import spherical_to_cartesian
 
+import numpy as np
+
 @dataclass
 class DrawObject():
     """ Star object to draw """
     x: float
     y: float
     z: float
-    brightness: float
+    luminosity: float
+    radius: float
 
 def run_api():
     """ do things! """
@@ -26,6 +29,8 @@ def run_api():
 
     stars = Gaia.query_object_async(coordinate=coord, width=width, height=height)
 
+    stars.pprint(max_lines=12, max_width=130)
+
     objs = []
     for idx in range(len(stars)):
         row = stars[idx]
@@ -33,15 +38,31 @@ def run_api():
         ra = row['ra']
         dec = row['dec']
         parallax = row['parallax']
-        # XXX: 
-        brightness = 1.0
+        luminosity = row['phot_g_mean_mag']
+        bp_rp = row['bp_rp']
+        temp = row['teff_gspphot']
 
+        if temp.mask:
+            temp = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
+
+        # Calculate distance
         distance = 1000 / parallax
+
+        # Stefan-Boltzmann-Konstante
+        sigma = 5.67e-8  # W/m^2/K^4
+
+        # Calculation of luminosity in watts (solar luminosity = 3.828e26 W)
+        luminosity_in_watt = luminosity * 3.828e26
+
+        # Calculate radius
+        radius = np.sqrt(luminosity_in_watt / (4 * np.pi * sigma * temp**4))
+
         x, y, z = spherical_to_cartesian(ra, dec, distance)
 
-        drawobject = DrawObject(x, y, z, brightness)
+        drawobject = DrawObject(x, y, z, luminosity, radius)
         objs.append(drawobject)
+        break
     return objs
 
-# obs = run_api()
-# print(obs)
+obs = run_api()
+print(obs)
