@@ -134,7 +134,7 @@ def run_simulation():
     Run star simulation
     """
     ra, dec = select_exoplanet()
-    plot_stars(fetch_api(ra, dec))
+    plot_stars(fetch_api(ra, dec, nr_stars_slider.get(), min_brightness_slider.get()))
 
 def update_approximation(ignored):
     """

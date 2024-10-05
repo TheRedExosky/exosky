@@ -24,7 +24,7 @@ class StarObject():
     radius: float
     temperature: float
 
-def fetch_api(ra=280, dec=-60, limit=100):
+def fetch_api(ra=280, dec=-60, limit=100, min_brightness=0):
     """
     Fetch a random subset of stars using the `random_index` column from Gaia.
     Args:
