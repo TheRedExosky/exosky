@@ -53,7 +53,7 @@ def plot_stars(stars: StarObject):
         if star.luminosity < min_lum:
             min_lum = star.luminosity
 
-    def translate_clamp(value, min_lum, max_lum):
+    def alpha_clamp(value, min_lum, max_lum):
         """
         Clamp values from `min_lum` to `max_lum` to 0 - 1.
         """
@@ -73,7 +73,7 @@ def plot_stars(stars: StarObject):
         wavelength = temperature_to_color(star.temperature)
         rgb_value = wavelength_to_rgb(wavelength)
         normalized_rgb = tuple([x / 255.0 for x in rgb_value])
-        color_with_luminosity = to_rgba(normalized_rgb, alpha=translate_clamp(star.luminosity, min_lum, max_lum))
+        color_with_luminosity = to_rgba(normalized_rgb, alpha=alpha_clamp(star.luminosity, min_lum, max_lum))
 
         # display object as a point cloud
         ax.scatter(star.x, star.y, star.z, s=size, c=[color_with_luminosity])
