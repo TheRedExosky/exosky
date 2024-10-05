@@ -6,32 +6,34 @@ import astropy.units as u
 from astropy.coordinates import SkyCoord
 from astroquery.gaia import Gaia
 from dataclasses import dataclass
+import numpy as np
 
 from calc import spherical_to_cartesian
 
-import numpy as np
-
 @dataclass
-class DrawObject():
-    """ Star object to draw """
+class StarObject():
+    """ Star object to draw in matplotlib """
     x: float
     y: float
     z: float
     luminosity: float
     radius: float
-    temp: float
+    temperature: float
 
-def run_api(ra=280, dec=-60):
-    """ do things! """
 
+def fetch_api(ra=280, dec=-60):
+    """
+    Fetch AstroQuery to fetch star data given a `ra` and `dec` position.
+    """
     coord = SkyCoord(ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
     width = u.Quantity(0.1, u.deg)
     height = u.Quantity(0.1, u.deg)
 
+    # fetch star table
     stars = Gaia.query_object_async(coordinate=coord, width=width, height=height)
-
     stars.pprint(max_lines=12, max_width=130)
 
+    # collect relevant data for futher plotting from star table
     objs = []
     for idx in range(len(stars)):
         row = stars[idx]
@@ -41,29 +43,18 @@ def run_api(ra=280, dec=-60):
         parallax = row['parallax']
         luminosity = row['phot_g_mean_mag']
         bp_rp = row['bp_rp']
-        temp = row['teff_gspphot']
+        temperature = row['teff_gspphot']
 
-        if not(temp):
-            temp = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
+        if not temperature:
+             temperature = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
 
-        # Calculate distance
         distance = 1000 / parallax
-
-        # Stefan-Boltzmann-Konstante
-        sigma = 5.67e-8  # W/m^2/K^4
-
-        # Calculation of luminosity in watts (solar luminosity = 3.828e26 W)
+        stefan_boltzmann_constant = 5.67e-8  # W/m^2/K^4
         luminosity_in_watt = luminosity * 3.828e26
-
-        # Calculate radius
-        radius = np.sqrt(luminosity_in_watt / (4 * np.pi * sigma * temp**4))
+        radius = np.sqrt(luminosity_in_watt / (4 * np.pi * stefan_boltzmann_constant * temperature**4))
 
         x, y, z = spherical_to_cartesian(ra, dec, distance)
+        drawobject = StarObject(x, y, z, luminosity, radius, temperature)
 
-        drawobject = DrawObject(x, y, z, luminosity, radius, temp)
         objs.append(drawobject)
     return objs
-
-
-# obs = run_api()
-# print(obs)
