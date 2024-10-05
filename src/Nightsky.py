@@ -8,6 +8,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import HORIZONTAL
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
@@ -145,6 +146,12 @@ if __name__ == "__main__":
     # add exoplantes to selection
     for name in exoplanet_data['75 Cet b']:
         exoplanet_listbox.insert(tk.END, name)
+
+    # number of stars slider
+    nr_stars_label = tk.Label(root, text="Nr. of Stars")
+    nr_stars_label.pack()
+    nr_stars_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=150, to=2000)
+    nr_stars_slider.pack()
 
     # add start button
     select_button = tk.Button(root, text="Show stars ⭐", command=run_simulation)
