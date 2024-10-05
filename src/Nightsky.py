@@ -131,6 +131,14 @@ def run_simulation():
     ra, dec = select_exoplanet()
     plot_stars(fetch_api(ra, dec))
 
+def update_approximation(ignored):
+    """
+    Callback method for the nr stars slider,
+    provides the current value as string, ignored because useless,
+    sets the approximation text
+    """
+    minutes = nr_stars_slider.get() / 100 # TODO better calculation
+    approximation_label.config(text=f"Approximately {minutes} minutes")
 
 if __name__ == "__main__":
     file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
@@ -148,10 +156,20 @@ if __name__ == "__main__":
         exoplanet_listbox.insert(tk.END, name)
 
     # number of stars slider
+    nr_stars_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=150, to=2000, command=update_approximation)
+    nr_stars_slider.pack()
     nr_stars_label = tk.Label(root, text="Nr. of Stars")
     nr_stars_label.pack()
-    nr_stars_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=150, to=2000)
-    nr_stars_slider.pack()
+
+    # approximation text
+    approximation_label = tk.Label(root, text="Approximately 1.5 minutes")
+    approximation_label.pack()
+
+    # min brightness slider
+    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=0, to=6000)
+    min_brightness_slider.pack()
+    min_brightness_label = tk.Label(root, text="Minimum Brightness")
+    min_brightness_label.pack()
 
     # add start button
     select_button = tk.Button(root, text="Show stars ⭐", command=run_simulation)
