@@ -17,11 +17,12 @@ import pandas as pd
 import sys
 from astropy.coordinates import Angle
 import astropy.units as u
+from typing import List
 
 from api import StarObject, fetch_api
 from calc import *
 
-def plot_stars(stars: StarObject):
+def plot_stars(stars: List[StarObject]):
     """
     Plot all stars, retrieved by the API.
     """
