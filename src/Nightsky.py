@@ -15,18 +15,6 @@ from api import DrawObject, run_api
 from astropy.coordinates import Angle
 import astropy.units as u
 
-# Funktion zur Umrechnung von Kugelkoordinaten in kartesische Koordinaten
-def spherical_to_cartesian(ra, dec, distance):
-    ra_rad = np.deg2rad(ra)  # Rektaszension in Radiant umwandeln
-    dec_rad = np.deg2rad(dec)  # Deklination in Radiant umwandeln
-
-    # Umrechnung in kartesische Koordinaten
-    x = distance * np.cos(dec_rad) * np.cos(ra_rad)
-    y = distance * np.cos(dec_rad) * np.sin(ra_rad)
-    z = distance * np.sin(dec_rad)
-    
-    return x, y, z
-
 def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
 
     # 3D-Abbildung erstellen
