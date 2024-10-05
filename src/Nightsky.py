@@ -16,8 +16,7 @@ import astropy.units as u
 from api import StarObject, fetch_api
 from calc import *
 
-
-def plot_sky(stars: [StarObject]):
+def plot_sky(stars: StarObject):
     """
     Plot all stars, retrieved by the API
     """
