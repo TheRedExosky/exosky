@@ -14,6 +14,7 @@ import sys
 from api import DrawObject, run_api
 from astropy.coordinates import Angle
 import astropy.units as u
+from calc import temperature_to_color, wavelength_to_rgb
 
 def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
 
@@ -50,11 +51,15 @@ def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
     for obj in drawobjects:
         print("clamped", translate_clamp(obj.luminosity,min_lum, max_lum))
         # Helligkeit des Objekts beeinflusst seine Darstellung
-        color_with_luminosity = to_rgba('white', alpha=translate_clamp(obj.luminosity,min_lum, max_lum))  # Helligkeit für Transparenz
-        size_with_luminosity = 10 * obj.luminosity # Größe proportional zur Helligkeit
+        size = obj.radius * 0.00000001
+        wavelength = temperature_to_color(obj.temp)
+        rgb_value = wavelength_to_rgb(wavelength)
+        normalized_rgb = tuple([x / 255.0 for x in rgb_value])
+
+        color_with_luminosity = to_rgba('normalized_rgb', alpha=translate_clamp(obj.luminosity, min_lum, max_lum))
 
         # Objekt als Punktwolke darstellen
-        ax.scatter(obj.x, obj.y, obj.z, s=obj.radius * 0.00000001, c=[color_with_luminosity])
+        ax.scatter(obj.x, obj.y, obj.z, s=size, c=[color_with_luminosity])
 
     # Hintergrund und Titel setzen
     ax.set_facecolor('black')

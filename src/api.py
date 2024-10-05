@@ -19,6 +19,7 @@ class DrawObject():
     z: float
     luminosity: float
     radius: float
+    temp: float
 
 def run_api(ra=280, dec=-60):
     """ do things! """
@@ -59,7 +60,7 @@ def run_api(ra=280, dec=-60):
 
         x, y, z = spherical_to_cartesian(ra, dec, distance)
 
-        drawobject = DrawObject(x, y, z, luminosity, radius)
+        drawobject = DrawObject(x, y, z, luminosity, radius, temp)
         objs.append(drawobject)
     return objs
 
