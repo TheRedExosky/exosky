@@ -12,8 +12,23 @@ import pandas as pd
 import sys
 
 from api import DrawObject, run_api
+from astropy.coordinates import Angle
+import astropy.units as u
 
-def plot_3d_star_map_with_planet(drawobjects: [DrawObject]):
+# Funktion zur Umrechnung von Kugelkoordinaten in kartesische Koordinaten
+def spherical_to_cartesian(ra, dec, distance):
+    ra_rad = np.deg2rad(ra)  # Rektaszension in Radiant umwandeln
+    dec_rad = np.deg2rad(dec)  # Deklination in Radiant umwandeln
+
+    # Umrechnung in kartesische Koordinaten
+    x = distance * np.cos(dec_rad) * np.cos(ra_rad)
+    y = distance * np.cos(dec_rad) * np.sin(ra_rad)
+    z = distance * np.sin(dec_rad)
+    
+    return x, y, z
+
+def plot_3d_star_map_with_planet(drawobjects: (DrawObject)):
+
     # 3D-Abbildung erstellen
     fig = plt.figure(figsize=(10, 8))
 
@@ -91,8 +106,22 @@ def plot_3d_star_map_with_planet(drawobjects: [DrawObject]):
     plt.show()
 
 
+# Funktion zur Umrechnung von RA im HMS-Format in Dezimalgrad
+def hms_to_degrees(ra_hms):
+    ra_angle = Angle(ra_hms, unit=u.hour)
+    return ra_angle.deg
+
+# Funktion zur Umrechnung von DEC im DMS-Format in Dezimalgrad
+def dms_to_degrees(dec_dms):
+    dec_angle = Angle(dec_dms, unit=u.deg)
+    return dec_angle.deg
+
 # Funktion zum Auswählen eines Exoplaneten und Erstellen der Sternkarte
 def on_select_exoplanet_3d():
+    index_name = 0
+    index_ra = 28
+    index_dec = 30
+
     selected_index = exoplanet_listbox.curselection()
     if not selected_index:
         messagebox.showwarning("Selection Error", "Please select an exoplanet.")
@@ -100,9 +129,15 @@ def on_select_exoplanet_3d():
 
     # Details des ausgewählten Exoplaneten holen
     selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
-    exoplanet_name = selected_exoplanet['75 Cet b']  # Exoplanetenname
-    exoplanet_ra = selected_exoplanet['38.0391598']  # Dezimal-RA-Spalte
-    exoplanet_dec = selected_exoplanet['-1.0350269']  # Dezimal-Dec-Spalte
+    exoplanet_name = selected_exoplanet[index_name]  # Exoplanetenname
+    print(exoplanet_name)
+
+    exoplanet_ra_hms = selected_exoplanet[index_ra]  # RA-Spalte im HMS-Format
+    exoplanet_dec_dms = selected_exoplanet[index_dec]  # DEC-Spalte im DMS-Format
+    
+    # Umwandlung in Dezimalwerte
+    exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)  # RA in Dezimalgrad
+    exoplanet_dec = dms_to_degrees(exoplanet_dec_dms)  # DEC in Dezimalgrad
 
     # 3D-Sternkarte erstellen
     plot_3d_star_map_with_planet(run_api(exoplanet_ra, exoplanet_dec))
