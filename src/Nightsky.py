@@ -7,7 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from astroquery.gaia import Gaia
+from matplotlib.colors import to_rgba
 import pandas as pd
+from api import DrawObject, run_api
 
 # Funktion zur Umrechnung von Kugelkoordinaten in kartesische Koordinaten
 def spherical_to_cartesian(ra, dec, distance):
@@ -21,33 +23,27 @@ def spherical_to_cartesian(ra, dec, distance):
     
     return x, y, z
 
-# Funktion zur Erstellung einer 3D-Sternkarte mit einem Planeten in der Mitte
-def plot_3d_star_map_with_planet(ra, dec, parallax, exoplanet_name):
-    # Parallaxe in Distanz umrechnen (in Parsecs)
-    distance = 1000 / parallax  # Umrechnung der Parallaxwerte
-
-    # Filtere sehr große Distanzen heraus (realistische Grenzen setzen)
-    valid_indices = np.isfinite(distance) & (distance < 5000) & (distance > 0)
-    ra = ra[valid_indices]
-    dec = dec[valid_indices]
-    distance = distance[valid_indices]
-
-    # Umrechnung der Kugelkoordinaten in kartesische Koordinaten
-    x, y, z = spherical_to_cartesian(ra, dec, distance)
+def plot_3d_star_map_with_planet(drawobject: (DrawObject)):
 
     # 3D-Abbildung erstellen
     fig = plt.figure(figsize=(10, 8))
+
     ax = fig.add_subplot(111, projection='3d')
 
-    # Sterne als Punktwolke darstellen
-    ax.scatter(x, y, z, s=10, c='white', alpha=0.8)
+    # Durch die Objekte in drawobject iterieren und für jedes die Helligkeit berücksichtigen
+    for obj in drawobject:
+        # Helligkeit des Objekts beeinflusst seine Darstellung
+        color_with_luminosity = to_rgba('white', alpha=obj.brightness)  # Helligkeit für Transparenz
+        size_with_luminosity = 10 * obj.brightness  # Größe proportional zur Helligkeit
+
+        # Objekt als Punktwolke darstellen
+        ax.scatter(obj.x, obj.y, obj.z, s=size_with_luminosity, c=[color_with_luminosity])
 
     # Hintergrund und Titel setzen
     ax.set_facecolor('black')
-    ax.set_title(f'3D Star Map from {exoplanet_name}', color='white')
 
-    # Achsen entfernen für eine klare Ansicht
-    ax.set_axis_off()
+    # Optional: Einen speziellen Planeten in der Mitte der Szene
+    ax.set_title('3D Star Map', color='yellow')
 
     # Einen größeren Planeten in der Mitte platzieren
     u, v = np.mgrid[0:2*np.pi:50j, 0:np.pi:25j]
@@ -64,6 +60,9 @@ def plot_3d_star_map_with_planet(ra, dec, parallax, exoplanet_name):
     ax.set_ylim([-2000, 2000])
     ax.set_zlim([-2000, 2000])
 
+    # Achsen entfernen für eine klare Ansicht
+    ax.set_axis_off()
+
     # Überflüssige Ränder entfernen
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
@@ -76,6 +75,7 @@ def plot_3d_star_map_with_planet(ra, dec, parallax, exoplanet_name):
 
     # Interaktive Rotation ermöglichen
     plt.show()
+
 
 # Funktion zur Abfrage von Gaia-Sterndaten
 def fetch_gaia_stars_3d(ra, dec, radius=5):
@@ -107,10 +107,10 @@ def on_select_exoplanet_3d():
     ra, dec, parallax = fetch_gaia_stars_3d(exoplanet_ra, exoplanet_dec, radius=10)
 
     # 3D-Sternkarte erstellen
-    plot_3d_star_map_with_planet(ra, dec, parallax, exoplanet_name)
+    plot_3d_star_map_with_planet(run_api(exoplanet_ra, exoplanet_dec))
 
 # Exoplanetendaten aus der CSV-Datei laden
-file_path = 'PSCompPars_2024.10.04_08.31.39.csv'
+file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
 exoplanet_data = pd.read_csv(file_path, skiprows=45)
 
 # Spaltennamen bereinigen
