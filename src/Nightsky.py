@@ -11,20 +11,7 @@ from matplotlib.colors import to_rgba
 import pandas as pd
 from api import DrawObject, run_api
 
-# Funktion zur Umrechnung von Kugelkoordinaten in kartesische Koordinaten
-def spherical_to_cartesian(ra, dec, distance):
-    ra_rad = np.deg2rad(ra)  # Rektaszension in Radiant umwandeln
-    dec_rad = np.deg2rad(dec)  # Deklination in Radiant umwandeln
-
-    # Umrechnung in kartesische Koordinaten
-    x = distance * np.cos(dec_rad) * np.cos(ra_rad)
-    y = distance * np.cos(dec_rad) * np.sin(ra_rad)
-    z = distance * np.sin(dec_rad)
-    
-    return x, y, z
-
 def plot_3d_star_map_with_planet(drawobject: (DrawObject)):
-
     # 3D-Abbildung erstellen
     fig = plt.figure(figsize=(10, 8))
 
@@ -76,19 +63,6 @@ def plot_3d_star_map_with_planet(drawobject: (DrawObject)):
     # Interaktive Rotation ermöglichen
     plt.show()
 
-
-# Funktion zur Abfrage von Gaia-Sterndaten
-def fetch_gaia_stars_3d(ra, dec, radius=5):
-    query = f"""
-    SELECT TOP 1500 ra, dec, parallax
-    FROM gaiadr3.gaia_source
-    WHERE CONTAINS(POINT('ICRS', ra, dec),
-                   CIRCLE('ICRS', {ra}, {dec}, {radius}))=1
-    AND parallax > 0
-    """
-    job = Gaia.launch_job(query)
-    result = job.get_results()
-    return result['ra'], result['dec'], result['parallax']
 
 # Funktion zum Auswählen eines Exoplaneten und Erstellen der Sternkarte
 def on_select_exoplanet_3d():
