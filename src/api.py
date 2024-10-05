@@ -24,7 +24,7 @@ class StarObject():
     radius: float
     temperature: float
 
-def fetch_api(ra=280, dec=-60, limit=100, min_brightness=0):
+def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     """
     Fetch a random subset of stars using the `random_index` column from Gaia.
     Args:
@@ -34,11 +34,12 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=0):
     Returns:
         List[StarObject]: A list of star objects for plotting.
     """
-    # Definiere die Koordinaten und den Suchradius
+    # Define coordinates & search radius
     # coord = SkyCoord(ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
-    radius_deg = u.Quantity(70, u.deg)  # Suchradius auf 70 Grad setzen
+    radius_deg = u.Quantity(70, u.deg)  # Set search radius to 70 degrees
 
-    # ADQL-Abfrage erstellen, um eine zufällige Auswahl von Sternen zu erhalten
+    # ADQL-Query, to get random selection of stars in view,
+    # limited by number and minimum brightness (lower value means brighter star)
     adql_query = f"""
     SELECT TOP {limit} *
     FROM gaiadr3.gaia_source
@@ -47,6 +48,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=0):
         CIRCLE('ICRS', {ra}, {dec}, {radius_deg.value})
     ) = 1
     AND parallax IS NOT NULL AND parallax > 0
+    AND phot_g_mean_mag <= {min_brightness}
     ORDER BY random_index
     """
 

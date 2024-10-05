@@ -171,9 +171,10 @@ if __name__ == "__main__":
     approximation_label.pack()
 
     # min brightness slider
-    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=0, to=6000)
+    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=21, to=3)
+    min_brightness_slider.set(21)
     min_brightness_slider.pack()
-    min_brightness_label = tk.Label(root, text="Minimum Brightness")
+    min_brightness_label = tk.Label(root, text="Minimum Brightness (small values indicate bright stars)")
     min_brightness_label.pack()
 
     # add start button
