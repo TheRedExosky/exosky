@@ -139,4 +139,5 @@ if __name__ == "__main__":
     select_button = tk.Button(root, text="Show stars ⭐", command=select_exoplanet)
     select_button.pack(pady=10)
 
+    root.bind('<Escape>', lambda e: root.destroy())
     root.mainloop()
