@@ -34,8 +34,18 @@ def fetch_api(ra=280, dec=-60):
     height = u.Quantity(0.1, u.deg)
 
     # fetch star table
-    stars = Gaia.query_object_async(coordinate=coord, width=width, height=height)
-    stars.pprint(max_lines=12, max_width=130)
+    #stars = Gaia.query_object_async(coordinate=coord, width=width, height=height)
+    #stars.pprint(max_lines=12, max_width=130)
+
+    query = f"""
+        SELECT source_id, ra, dec, pmra, pmdec, parallax, phot_g_mean_mag, teff_gspphot, bp_rp
+FROM gaiadr3.gaia_source
+WHERE DISTANCE(POINT(81.28, -69.78), POINT(ra, dec)) < 1
+"""
+    
+    job = Gaia.launch_job(query)
+    stars = job.get_results()
+
 
     # collect relevant data for futher plotting from star table
     objs = []
