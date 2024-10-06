@@ -44,6 +44,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
 
     # Iterate over all starting points & query with smaller angles
     for index in range(num_patches):
+        offset = index * patch_size
         adql_query = f"""
         SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
         FROM gaiadr3.gaia_source
@@ -54,6 +55,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         AND parallax IS NOT NULL AND parallax > 0
         AND phot_g_mean_mag <= {min_brightness}
         ORDER BY random_index
+        OFFSET {offset}
         """
 
         debug("API", f"Starting query {index + 1} for stars...")
@@ -66,7 +68,6 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     objs = []
     for job in jobs:
         stars = job.get_results()
-        print(len(stars))
 
         for idx in range(len(stars)):
             row = stars[idx]
