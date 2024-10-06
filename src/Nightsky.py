@@ -20,7 +20,7 @@ from api import StarObject, fetch_api
 from calc import *
 
 if __name__ == "__main__":
-    if sys.argv[1] == "agg":
+    if len(sys.argv) == 2 and sys.argv[1] == "agg":
         import matplotlib
         matplotlib.use('Qt5Agg')
 
