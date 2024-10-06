@@ -172,7 +172,7 @@ def update_approximation(ignored):
     provides the current value as string, ignored because useless,
     sets the approximation text
     """
-    seconds = round(nr_stars_slider.get() / 4000 * 90)
+    seconds = round((27 / 7122500) * nr_stars_slider.get()**2 + (-391 / 142450) * nr_stars_slider.get() + (114890 /2849))
     approximation_label.config(text=f"Approximately {seconds} seconds")
 
 
