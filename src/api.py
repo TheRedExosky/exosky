@@ -36,32 +36,38 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         List[StarObject]: A list of star objects for plotting.
     """
     # Split into 12 patches to not run into timeouts
-    num_patches = 8
-    radius_deg = u.Quantity(30, u.deg)
-    ra_centers = np.linspace(0, 360, num_patches, endpoint=False)
+    num_patches = 4
+    patch_size = round(limit / num_patches)
+    radius_deg = u.Quantity(90, u.deg)
+
+    jobs = []
 
     # Iterate over all starting points & query with smaller angles
-    for ra_center in ra_centers:
+    for index in range(num_patches):
         adql_query = f"""
-        SELECT TOP {limit} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
+        SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
         FROM gaiadr3.gaia_source
         WHERE CONTAINS(
             POINT('ICRS', ra, dec),
-            CIRCLE('ICRS', {ra_center}, {dec}, {radius_deg.value})
+            CIRCLE('ICRS', {ra}, {dec}, {radius_deg.value})
         ) = 1
         AND parallax IS NOT NULL AND parallax > 0
         AND phot_g_mean_mag <= {min_brightness}
         ORDER BY random_index
         """
 
-        debug("API", "Starting query for stars...")
+        debug("API", f"Starting query {index + 1} for stars...")
 
         job = Gaia.launch_job_async(adql_query)
+        jobs.append(job)
+    
+    debug("API", "Fetched all stars, starting to process...")
+
+    objs = []
+    for job in jobs:
         stars = job.get_results()
+        print(len(stars))
 
-        debug("API", "Fetched all stars, starting to process...")
-
-        objs = []
         for idx in range(len(stars)):
             row = stars[idx]
 
