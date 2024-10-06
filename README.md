@@ -1,5 +1,7 @@
 # TheRedExosky
 
+<img src="logo.png" width=200px>
+
 ### Project Name
 
 TheRedExosky
