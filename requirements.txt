@@ -1,8 +1,6 @@
-python3-tkinter
-
 astroquery
 matplotlib
+mplcursors
 numpy
 pandas
 seaborn
-mplcursors
