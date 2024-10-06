@@ -46,7 +46,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     # Iterate over all starting points & query with smaller angles
     for index in range(num_patches):
         adql_query = f"""
-        SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
+        SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot, designation
         FROM gaiadr3.gaia_source
         WHERE CONTAINS(
             POINT('ICRS', ra, dec),
@@ -67,7 +67,6 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     objs = []
     for job in jobs:
         stars = job.get_results()
-        print(len(stars))
 
         for idx in range(len(stars)):
             row = stars[idx]
