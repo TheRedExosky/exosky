@@ -5,10 +5,9 @@ Everything related to fetching star data from AstroQuery.
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
-from astroquery.gaia import Gaia
 import astropy.units as u
-from astropy.coordinates import SkyCoord
 from astroquery.gaia import Gaia
+from astropy.coordinates import SkyCoord
 from dataclasses import dataclass
 import numpy as np
 
