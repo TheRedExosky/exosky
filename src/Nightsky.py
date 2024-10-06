@@ -73,7 +73,7 @@ def plot_stars(stars: List[StarObject]):
     
     # draw each star
     for star in stars:
-        size = star.radius * 0.00000001
+        size = star.radius * 1e-10
         wavelength = temperature_to_color(star.temperature)
         rgb_value = wavelength_to_rgb(wavelength)
         normalized_rgb = tuple([x / 255.0 for x in rgb_value])
@@ -81,6 +81,8 @@ def plot_stars(stars: List[StarObject]):
         alpha_clamp_value = alpha_clamp(star.luminosity, min_lum, max_lum) 
         if not alpha_clamp_value:
             alpha_clamp_value = 0
+        # higher lumonisty implies lower brightness, resulting in lower alpha
+        alpha_clamp_value = 1 - alpha_clamp_value
 
         color_with_luminosity = to_rgba('white', alpha=alpha_clamp_value)
 
@@ -90,11 +92,11 @@ def plot_stars(stars: List[StarObject]):
     # draw planet in center
     if True:
         u, v = np.mgrid[0:2*np.pi:50j, 0:np.pi:25j]
-        r_planet = 200  # Adjust the size of the planet
+        r_planet = 50
         x_planet = r_planet * np.cos(u) * np.sin(v)
         y_planet = r_planet * np.sin(u) * np.sin(v)
         z_planet = r_planet * np.cos(v)
-        ax.plot_surface(x_planet, y_planet, z_planet, color='blue', alpha=0.7, rstride=5, cstride=5)
+        ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=0.7, rstride=5, cstride=5)
 
     # interactive rotation
     mng = plt.get_current_fig_manager()
@@ -148,7 +150,7 @@ def update_approximation(ignored):
     provides the current value as string, ignored because useless,
     sets the approximation text
     """
-    minutes = nr_stars_slider.get() / 100 # TODO better calculation
+    minutes = nr_stars_slider.get() / 100  # TODO better calculation
     approximation_label.config(text=f"Approximately {minutes} minutes")
 
 if __name__ == "__main__":
