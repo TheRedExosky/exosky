@@ -155,7 +155,7 @@ def update_approximation(ignored):
 
 if __name__ == "__main__":
     file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
-    exoplanet_data = pd.read_csv(file_path, skiprows=45)
+    exoplanet_data = pd.read_csv(file_path, skiprows=0)
     exoplanet_data.columns = exoplanet_data.columns.str.strip()
 
     # selection interface
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     exoplanet_listbox.pack(padx=10, pady=10)
 
     # add exoplantes to selection
-    for name in exoplanet_data['75 Cet b']:
+    for name in exoplanet_data['pl_name']:
         exoplanet_listbox.insert(tk.END, name)
 
     # number of stars slider
