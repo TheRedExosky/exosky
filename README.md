@@ -24,4 +24,4 @@ The project is written in python using the following python packages:
 
 1. Install python3.
 2. Navigate into the project and execute `pip3 install -r requirements.txt` in the command line.
-3. Run the project from the command line by navigating to the src folder `cd src` and then running the command (don't forget the argument) `python3 Nightsky.py` or from an IDE such as VS Code.
+3. Run the project from the command line by navigating to the src folder `cd src` and then running the command `python3 Nightsky.py` or from an IDE such as VS Code.
