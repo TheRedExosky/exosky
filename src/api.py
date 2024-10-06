@@ -26,7 +26,7 @@ class StarObject():
     designation: str
 
 
-def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
+def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21, parallax=300.0):
     """
     Fetch a random subset of stars using the `random_index` column from Gaia.
     Args:
@@ -40,6 +40,9 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     num_patches = 4
     patch_size = round(limit / num_patches)
     radius_deg = u.Quantity(90, u.deg)
+
+    max_distance = 1000 / parallax * 1.1
+    min_distance = 1000 / parallax * 0.9
 
     jobs = []
 
@@ -55,6 +58,8 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         ) = 1
         AND parallax IS NOT NULL AND parallax > 0
         AND phot_g_mean_mag <= {min_brightness}
+        AND parallax >= {min_distance}
+        AND parallax <= {max_distance}
         ORDER BY random_index
         OFFSET {offset}
         """
