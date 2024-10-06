@@ -198,7 +198,7 @@ if __name__ == "__main__":
     nr_stars_label.pack()
 
     # approximation text
-    approximation_label = tk.Label(root, text="Approximately 1.5 minutes")
+    approximation_label = tk.Label(root, text="Approximately 40 seconds")
     approximation_label.pack()
 
     # min brightness slider
