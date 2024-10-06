@@ -18,6 +18,7 @@ from typing import List
 
 from api import StarObject, fetch_api
 from calc import *
+from debug import debug
 
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "agg":
@@ -29,8 +30,6 @@ def plot_stars(stars: List[StarObject]):
     """
     Plot all stars, retrieved by the API.
     """
-    print("Amount of found stars:", len(stars))
-
     # setup plot and subplot
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -68,8 +67,8 @@ def plot_stars(stars: List[StarObject]):
         else:
             return nom / denom
 
-    print("Minimum found luminosity", min_lum)
-    print("Maximum found luminosity", max_lum)
+    debug("Minimum found luminosity", min_lum)
+    debug("Maximum found luminosity", max_lum)
     
     # draw each star
     for star in stars:
@@ -124,7 +123,7 @@ def select_exoplanet():
 
     selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
     exoplanet_name = selected_exoplanet.iloc[index_name]
-    print("Selected planet:", exoplanet_name)
+    debug("Selected planet", exoplanet_name)
 
     # convert to hms
     exoplanet_ra_hms = selected_exoplanet.iloc[index_ra]

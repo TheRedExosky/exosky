@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from calc import spherical_to_cartesian
+from debug import debug
 
 @dataclass
 class StarObject():
@@ -35,7 +36,6 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     Returns:
         List[StarObject]: A list of star objects for plotting.
     """
-    # Define coordinates & search radius
     # coord = SkyCoord(ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
     radius_deg = u.Quantity(70, u.deg)
 
@@ -51,11 +51,13 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     ORDER BY random_index
     """
 
-    # Führe die Abfrage durch und gib die Ergebnisse zurück
+    debug("API", "Starting query for stars...")
+
     job = Gaia.launch_job_async(adql_query)
     stars = job.get_results()
 
-    # Sterne für die Darstellung sammeln
+    debug("API", "Fetched all stars, starting to process...")
+
     objs = []
     for idx in range(len(stars)):
         row = stars[idx]
@@ -87,9 +89,9 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         div = nom / denom
         radius = np.sqrt(div)
 
-        # Konvertiere in kartesische Koordinaten
         x, y, z = spherical_to_cartesian(ra, dec, distance)
         drawobject = StarObject(x, y, z, luminosity, radius, temperature)
         objs.append(drawobject)
 
+    debug("API", f"Done processing, returning {len(objs)} stars")
     return objs
