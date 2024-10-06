@@ -172,8 +172,8 @@ def update_approximation(ignored):
     provides the current value as string, ignored because useless,
     sets the approximation text
     """
-    minutes = nr_stars_slider.get() / 100  # TODO better calculation
-    approximation_label.config(text=f"Approximately {minutes} minutes")
+    seconds = round(nr_stars_slider.get() / 4000 * 90)
+    approximation_label.config(text=f"Approximately {seconds} seconds")
 
 
 if __name__ == "__main__":
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         exoplanet_listbox.insert(tk.END, name)
 
     # number of stars slider
-    nr_stars_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=150, to=2000, command=update_approximation)
+    nr_stars_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=150, to=4000, command=update_approximation)
     nr_stars_slider.pack()
     nr_stars_label = tk.Label(root, text="Nr. of Stars")
     nr_stars_label.pack()
