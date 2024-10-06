@@ -157,6 +157,8 @@ def select_exoplanet():
     exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)
     exoplanet_dec = dms_to_degrees(exoplanet_dec_dms)
 
+    print(exoplanet_ra_hms, exoplanet_dec_dms, exoplanet_parallax)
+
     return exoplanet_ra, exoplanet_dec, exoplanet_parallax
 
 

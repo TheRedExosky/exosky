@@ -46,6 +46,8 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21, parallax=300.0):
 
     jobs = []
 
+    print(parallax, max_distance, min_distance)
+
     # Iterate over all starting points & query with smaller angles
     for index in range(num_patches):
         offset = index * patch_size
