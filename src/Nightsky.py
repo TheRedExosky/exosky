@@ -144,6 +144,7 @@ def run_simulation():
     ra, dec = select_exoplanet()
     plot_stars(fetch_api(ra, dec, nr_stars_slider.get(), min_brightness_slider.get()))
 
+
 def update_approximation(ignored):
     """
     Callback method for the nr stars slider,
@@ -152,6 +153,7 @@ def update_approximation(ignored):
     """
     minutes = nr_stars_slider.get() / 100  # TODO better calculation
     approximation_label.config(text=f"Approximately {minutes} minutes")
+
 
 if __name__ == "__main__":
     file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
@@ -182,7 +184,7 @@ if __name__ == "__main__":
     min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=21, to=3)
     min_brightness_slider.set(21)
     min_brightness_slider.pack()
-    min_brightness_label = tk.Label(root, text="Minimum Brightness (small values indicate bright stars)")
+    min_brightness_label = tk.Label(root, text="Minimum Star Luminosity (Small means brighter)")
     min_brightness_label.pack()
 
     # add start button
