@@ -15,6 +15,7 @@ from matplotlib.colors import to_rgba
 import pandas as pd
 import sys
 from typing import List
+import mplcursors
 
 from api import StarObject, fetch_api
 from calc import *
@@ -34,7 +35,7 @@ def plot_stars(stars: List[StarObject]):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
     ax.set_facecolor('black')
-    ax.set_title('3D Star Map', color='yellow')
+    ax.set_title('3D Star Map', color='black')
     ax.set_xlim([-2000, 2000])
     ax.set_ylim([-2000, 2000])
     ax.set_zlim([-2000, 2000])
@@ -71,8 +72,16 @@ def plot_stars(stars: List[StarObject]):
     debug("Maximum found luminosity", max_lum)
     
     # draw each star
-    for star in stars:
-        size = star.radius * 1e-10
+    xs = []
+    ys = []
+    zs = []
+    colors = []
+    radia = []
+    sizes = []
+    temperatures = []
+    for idx,star in enumerate(stars):
+        size = star.radius * 1e-9
+        temperatures.append(star.temperature)
         wavelength = temperature_to_color(star.temperature)
         rgb_value = wavelength_to_rgb(wavelength)
         normalized_rgb = tuple([x / 255.0 for x in rgb_value])
@@ -86,7 +95,19 @@ def plot_stars(stars: List[StarObject]):
         color_with_luminosity = to_rgba('white', alpha=alpha_clamp_value)
 
         # display object as a point cloud
-        ax.scatter(star.x, star.y, star.z, s=size, c=[color_with_luminosity])
+        xs.append(star.x)
+        ys.append(star.y)
+        zs.append(star.z)
+        radia.append(star.radius)
+        sizes.append(size)
+        colors.append(color_with_luminosity)
+
+    # show stars to screen
+    scatter = ax.scatter(xs,ys,zs, s=sizes, c=colors)
+    names = [s.designation for s in stars]
+
+    # add hover information
+    mplcursors.cursor(scatter, hover=2).connect("add", lambda sel: sel.annotation.set_text(f"Name: {names[sel.index]}\nRadius: {radia[sel.index]}m\nTemperatur: {temperatures[sel.index]}K"))
 
     # draw planet in center
     if True:
@@ -95,7 +116,7 @@ def plot_stars(stars: List[StarObject]):
         x_planet = r_planet * np.cos(u) * np.sin(v)
         y_planet = r_planet * np.sin(u) * np.sin(v)
         z_planet = r_planet * np.cos(v) * 1.3
-        ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=0.7, rstride=5, cstride=5)
+        ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=1, rstride=5, cstride=5)
 
     # interactive rotation
     mng = plt.get_current_fig_manager()
