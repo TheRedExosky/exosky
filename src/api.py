@@ -40,7 +40,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     radius_deg = u.Quantity(70, u.deg)
 
     adql_query = f"""
-    SELECT TOP {limit} *
+    SELECT TOP {limit} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
     FROM gaiadr3.gaia_source
     WHERE CONTAINS(
         POINT('ICRS', ra, dec),
