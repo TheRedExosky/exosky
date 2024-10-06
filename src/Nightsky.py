@@ -94,7 +94,7 @@ def plot_stars(stars: List[StarObject]):
         r_planet = 50
         x_planet = r_planet * np.cos(u) * np.sin(v)
         y_planet = r_planet * np.sin(u) * np.sin(v)
-        z_planet = r_planet * np.cos(v)
+        z_planet = r_planet * np.cos(v) * 1.3
         ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=0.7, rstride=5, cstride=5)
 
     # interactive rotation
