@@ -64,6 +64,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         dec = row['dec']
         parallax = row['parallax']
 
+        # skip stars without a parallax value
         if not parallax or parallax <= 0:
             continue
 
@@ -71,14 +72,20 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         bp_rp = row['bp_rp']
         temperature = row['teff_gspphot']
 
+        # calculate temperature, if not provided by request
         if not temperature:
             temperature = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
 
-        # Berechnung der Distanz und des Radius
         distance = 1000 / parallax
         stefan_boltzmann_constant = 5.67e-8  # W/m^2/K^4
         luminosity_in_watt = luminosity * 3.828e26
-        radius = np.sqrt(luminosity_in_watt / (4 * np.pi * stefan_boltzmann_constant * temperature**4))
+        nom = luminosity_in_watt
+        denom = 4 * np.pi * stefan_boltzmann_constant * temperature**4
+        # skip stars with invalid radius
+        if not denom:
+            continue
+        div = nom / denom
+        radius = np.sqrt(div)
 
         # Konvertiere in kartesische Koordinaten
         x, y, z = spherical_to_cartesian(ra, dec, distance)
