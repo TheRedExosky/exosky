@@ -95,9 +95,10 @@ def plot_stars(stars: List[StarObject]):
         color_with_luminosity = to_rgba('white', alpha=alpha_clamp_value)
 
         # display object as a point cloud
-        xs.append(star.x)
-        ys.append(star.y)
-        zs.append(star.z)
+        STRETCH = 10
+        xs.append(star.x * STRETCH)
+        ys.append(star.y * STRETCH)
+        zs.append(star.z * STRETCH)
         radia.append(star.radius)
         sizes.append(size)
         colors.append(color_with_luminosity)
