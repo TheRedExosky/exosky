@@ -35,54 +35,57 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     Returns:
         List[StarObject]: A list of star objects for plotting.
     """
-    # Define coordinates & search radius
-    # coord = SkyCoord(ra=ra, dec=dec, unit=(u.degree, u.degree), frame='icrs')
-    radius_deg = u.Quantity(70, u.deg)
+    # Split into 12 patches to not run into timeouts
+    num_patches = 8
+    radius_deg = u.Quantity(30, u.deg)
+    ra_centers = np.linspace(0, 360, num_patches, endpoint=False)
 
-    adql_query = f"""
-    SELECT TOP {limit} *
-    FROM gaiadr3.gaia_source
-    WHERE CONTAINS(
-        POINT('ICRS', ra, dec),
-        CIRCLE('ICRS', {ra}, {dec}, {radius_deg.value})
-    ) = 1
-    AND parallax IS NOT NULL AND parallax > 0
-    AND phot_g_mean_mag <= {min_brightness}
-    ORDER BY random_index
-    """
+    # Iterate over all starting points & query with smaller angles
+    for ra_center in ra_centers:
+        adql_query = f"""
+        SELECT TOP {limit} *
+        FROM gaiadr3.gaia_source
+        WHERE CONTAINS(
+            POINT('ICRS', ra, dec),
+            CIRCLE('ICRS', {ra_center}, {dec}, {radius_deg.value})
+        ) = 1
+        AND parallax IS NOT NULL AND parallax > 0
+        AND phot_g_mean_mag <= {min_brightness}
+        ORDER BY random_index
+        """
 
-    # Führe die Abfrage durch und gib die Ergebnisse zurück
-    job = Gaia.launch_job_async(adql_query)
-    stars = job.get_results()
+        # Führe die Abfrage durch und gib die Ergebnisse zurück
+        job = Gaia.launch_job_async(adql_query)
+        stars = job.get_results()
 
-    # Sterne für die Darstellung sammeln
-    objs = []
-    for idx in range(len(stars)):
-        row = stars[idx]
+        # Sterne für die Darstellung sammeln
+        objs = []
+        for idx in range(len(stars)):
+            row = stars[idx]
 
-        ra = row['ra']
-        dec = row['dec']
-        parallax = row['parallax']
+            ra = row['ra']
+            dec = row['dec']
+            parallax = row['parallax']
 
-        if not parallax or parallax <= 0:
-            continue
+            if not parallax or parallax <= 0:
+                continue
 
-        luminosity = row['phot_g_mean_mag']
-        bp_rp = row['bp_rp']
-        temperature = row['teff_gspphot']
+            luminosity = row['phot_g_mean_mag']
+            bp_rp = row['bp_rp']
+            temperature = row['teff_gspphot']
 
-        if not temperature:
-            temperature = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
+            if not temperature:
+                temperature = 5601 * (0.4 * bp_rp + 1) ** (-1.6)
 
-        # Berechnung der Distanz und des Radius
-        distance = 1000 / parallax
-        stefan_boltzmann_constant = 5.67e-8  # W/m^2/K^4
-        luminosity_in_watt = luminosity * 3.828e26
-        radius = np.sqrt(luminosity_in_watt / (4 * np.pi * stefan_boltzmann_constant * temperature**4))
+            # Berechnung der Distanz und des Radius
+            distance = 1000 / parallax
+            stefan_boltzmann_constant = 5.67e-8  # W/m^2/K^4
+            luminosity_in_watt = luminosity * 3.828e26
+            radius = np.sqrt(luminosity_in_watt / (4 * np.pi * stefan_boltzmann_constant * temperature**4))
 
-        # Konvertiere in kartesische Koordinaten
-        x, y, z = spherical_to_cartesian(ra, dec, distance)
-        drawobject = StarObject(x, y, z, luminosity, radius, temperature)
-        objs.append(drawobject)
+            # Konvertiere in kartesische Koordinaten
+            x, y, z = spherical_to_cartesian(ra, dec, distance)
+            drawobject = StarObject(x, y, z, luminosity, radius, temperature)
+            objs.append(drawobject)
 
     return objs
