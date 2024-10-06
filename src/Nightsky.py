@@ -19,6 +19,12 @@ from typing import List
 from api import StarObject, fetch_api
 from calc import *
 
+if __name__ == "__main__":
+    if sys.argv[1] == "agg":
+        import matplotlib
+        matplotlib.use('Qt5Agg')
+
+
 def plot_stars(stars: List[StarObject]):
     """
     Plot all stars, retrieved by the API.
