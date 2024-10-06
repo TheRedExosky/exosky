@@ -125,6 +125,8 @@ def plot_stars(stars: List[StarObject]):
         mng.window.state('zoomed')
     except:
         mng.full_screen_toggle()
+    
+    mng.set_window_title("TheRedExoplanet")
 
     # show all to screen
     plt.show()
