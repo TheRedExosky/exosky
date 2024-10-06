@@ -18,6 +18,7 @@ from typing import List
 
 from api import StarObject, fetch_api
 from calc import *
+from debug import debug
 
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "agg":
@@ -29,8 +30,6 @@ def plot_stars(stars: List[StarObject]):
     """
     Plot all stars, retrieved by the API.
     """
-    print("Amount start", len(stars))
-
     # setup plot and subplot
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -45,7 +44,7 @@ def plot_stars(stars: List[StarObject]):
     # exoplanet name
     selected_index = exoplanet_listbox.curselection()
     selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
-    exoplanet_name = selected_exoplanet[0]
+    exoplanet_name = selected_exoplanet.iloc[0]
     fig.suptitle("Exoplanet: " + exoplanet_name, color="white")
 
     # clamp luminosity from 0 to 1 for alpha value in plot
@@ -68,8 +67,8 @@ def plot_stars(stars: List[StarObject]):
         else:
             return nom / denom
 
-    print("Min lum", min_lum)
-    print("Max lum", max_lum)
+    debug("Minimum found luminosity", min_lum)
+    debug("Maximum found luminosity", max_lum)
     
     # draw each star
     for star in stars:
@@ -95,7 +94,7 @@ def plot_stars(stars: List[StarObject]):
         r_planet = 50
         x_planet = r_planet * np.cos(u) * np.sin(v)
         y_planet = r_planet * np.sin(u) * np.sin(v)
-        z_planet = r_planet * np.cos(v)
+        z_planet = r_planet * np.cos(v) * 1.3
         ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=0.7, rstride=5, cstride=5)
 
     # interactive rotation
@@ -123,12 +122,12 @@ def select_exoplanet():
         return
 
     selected_exoplanet = exoplanet_data.iloc[selected_index[0]]
-    exoplanet_name = selected_exoplanet[index_name]
-    print("selected planet", exoplanet_name)
+    exoplanet_name = selected_exoplanet.iloc[index_name]
+    debug("Selected planet", exoplanet_name)
 
     # convert to hms
-    exoplanet_ra_hms = selected_exoplanet[index_ra]
-    exoplanet_dec_dms = selected_exoplanet[index_dec]
+    exoplanet_ra_hms = selected_exoplanet.iloc[index_ra]
+    exoplanet_dec_dms = selected_exoplanet.iloc[index_dec]
     
     # convert to decimal values
     exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)
@@ -181,7 +180,7 @@ if __name__ == "__main__":
     approximation_label.pack()
 
     # min brightness slider
-    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=21, to=3)
+    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=3, to=21)
     min_brightness_slider.set(21)
     min_brightness_slider.pack()
     min_brightness_label = tk.Label(root, text="Minimum Star Luminosity (Small means brighter)")
