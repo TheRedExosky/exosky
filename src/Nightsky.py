@@ -180,7 +180,7 @@ if __name__ == "__main__":
     approximation_label.pack()
 
     # min brightness slider
-    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=21, to=3)
+    min_brightness_slider = tk.Scale(root, orient=HORIZONTAL, length=400, from_=3, to=21)
     min_brightness_slider.set(21)
     min_brightness_slider.pack()
     min_brightness_label = tk.Label(root, text="Minimum Star Luminosity (Small means brighter)")
