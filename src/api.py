@@ -23,6 +23,7 @@ class StarObject():
     luminosity: float
     radius: float
     temperature: float
+    designation: str
 
 
 def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
@@ -46,7 +47,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
     for index in range(num_patches):
         offset = index * patch_size
         adql_query = f"""
-        SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot
+        SELECT TOP {patch_size} ra, dec, parallax, phot_g_mean_mag, bp_rp, teff_gspphot, designation
         FROM gaiadr3.gaia_source
         WHERE CONTAINS(
             POINT('ICRS', ra, dec),
@@ -100,7 +101,8 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
             radius = np.sqrt(div)
 
             x, y, z = spherical_to_cartesian(ra, dec, distance)
-            drawobject = StarObject(x, y, z, luminosity, radius, temperature)
+            designation = row['DESIGNATION']
+            drawobject = StarObject(x, y, z, luminosity, radius, temperature, designation)
             objs.append(drawobject)
 
     debug("API", f"Done processing, returning {len(objs)} stars")
