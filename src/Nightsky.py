@@ -137,8 +137,8 @@ def select_exoplanet():
     Select and exoplanet and parse `ra` and `dec` data.
     """
     index_name = 0
-    index_ra = 28
-    index_dec = 30
+    index_ra = 1
+    index_dec = 2
 
     selected_index = exoplanet_listbox.curselection()
     if not selected_index:
@@ -179,7 +179,7 @@ def update_approximation(ignored):
 
 
 if __name__ == "__main__":
-    file_path = './../PSCompPars_2024.10.04_08.31.39.csv'
+    file_path = './../exoplanets.csv'
     exoplanet_data = pd.read_csv(file_path, skiprows=0)
     exoplanet_data.columns = exoplanet_data.columns.str.strip()
 
