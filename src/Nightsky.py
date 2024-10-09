@@ -9,7 +9,6 @@ ssl._create_default_https_context = ssl._create_unverified_context
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import HORIZONTAL
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
 import pandas as pd
@@ -57,19 +56,19 @@ def plot_stars(stars: List[StarObject]):
         if star.luminosity < min_lum:
             min_lum = star.luminosity
 
-    def alpha_clamp(value, min_lum, max_lum):
+    def alpha_clamp(value, min_lum_x, max_lum_x):
         """
         Clamp values from `min_lum` to `max_lum` to 0 - 1.
         """
-        nom = (value - min_lum)
-        denom = (max_lum - min_lum)
+        nom = (value - min_lum_x)
+        denom = (max_lum_x - min_lum_x)
         if denom == 0.0:
             return 1.0
         else:
             return nom / denom
 
-    debug("Minimum found luminosity", min_lum)
-    debug("Maximum found luminosity", max_lum)
+    debug("Minimum found luminosity", str(min_lum))
+    debug("Maximum found luminosity", str(max_lum))
     
     # draw each star
     xs = []
@@ -89,16 +88,16 @@ def plot_stars(stars: List[StarObject]):
         alpha_clamp_value = alpha_clamp(star.luminosity, min_lum, max_lum) 
         if not alpha_clamp_value:
             alpha_clamp_value = 0
-        # higher lumonisty implies lower brightness, resulting in lower alpha
+        # higher luminosity implies lower brightness, resulting in lower alpha
         alpha_clamp_value = 1 - alpha_clamp_value
 
         color_with_luminosity = to_rgba('white', alpha=alpha_clamp_value)
 
         # display object as a point cloud
-        STRETCH = 10
-        xs.append(star.x * STRETCH)
-        ys.append(star.y * STRETCH)
-        zs.append(star.z * STRETCH)
+        stretch = 10
+        xs.append(star.x * stretch)
+        ys.append(star.y * stretch)
+        zs.append(star.z * stretch)
         radia.append(star.radius)
         sizes.append(size)
         colors.append(color_with_luminosity)
@@ -112,10 +111,10 @@ def plot_stars(stars: List[StarObject]):
 
     # draw planet in center
     if True:
-        u, v = np.mgrid[0:2*np.pi:50j, 0:np.pi:25j]
+        c, v = np.mgrid[0:2 * np.pi:50j, 0:np.pi:25j]
         r_planet = 50
-        x_planet = r_planet * np.cos(u) * np.sin(v)
-        y_planet = r_planet * np.sin(u) * np.sin(v)
+        x_planet = r_planet * np.cos(c) * np.sin(v)
+        y_planet = r_planet * np.sin(c) * np.sin(v)
         z_planet = r_planet * np.cos(v) * 1.3
         ax.plot_surface(x_planet, y_planet, z_planet, color='#006994', alpha=1, rstride=5, cstride=5)
 
@@ -149,13 +148,9 @@ def select_exoplanet():
     exoplanet_name = selected_exoplanet.iloc[index_name]
     debug("Selected planet", exoplanet_name)
 
-    # convert to hms
-    exoplanet_ra_hms = selected_exoplanet.iloc[index_ra]
-    exoplanet_dec_dms = selected_exoplanet.iloc[index_dec]
-    
-    # convert to decimal values
-    exoplanet_ra = hms_to_degrees(exoplanet_ra_hms)
-    exoplanet_dec = dms_to_degrees(exoplanet_dec_dms)
+    # extract right ascension & declination
+    exoplanet_ra = selected_exoplanet.iloc[index_ra]
+    exoplanet_dec = selected_exoplanet.iloc[index_dec]
 
     return exoplanet_ra,exoplanet_dec
 
@@ -165,7 +160,7 @@ def run_simulation():
     Run star simulation
     """
     ra, dec = select_exoplanet()
-    plot_stars(fetch_api(ra, dec, nr_stars_slider.get(), min_brightness_slider.get()))
+    plot_stars(fetch_api(ra, dec, round(nr_stars_slider.get()), round(min_brightness_slider.get())))
 
 
 def update_approximation(ignored):
@@ -189,7 +184,7 @@ if __name__ == "__main__":
     exoplanet_listbox = tk.Listbox(root, width=50, height=20)
     exoplanet_listbox.pack(padx=10, pady=10)
 
-    # add exoplantes to selection
+    # add exoplanets to selection
     for name in exoplanet_data['pl_name']:
         exoplanet_listbox.insert(tk.END, name)
 

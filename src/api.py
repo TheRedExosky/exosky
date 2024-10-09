@@ -7,7 +7,6 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 import astropy.units as u
 from astroquery.gaia import Gaia
-from astropy.coordinates import SkyCoord
 from dataclasses import dataclass
 import numpy as np
 
@@ -15,7 +14,7 @@ from calc import spherical_to_cartesian
 from debug import debug
 
 @dataclass
-class StarObject():
+class StarObject:
     """ Star object to draw in matplotlib """
     x: float
     y: float
@@ -26,13 +25,14 @@ class StarObject():
     designation: str
 
 
-def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
+def fetch_api(ra: float, dec: float, limit: int = 150, min_brightness: int = 21):
     """
     Fetch a random subset of stars using the `random_index` column from Gaia.
     Args:
         ra (float): Right Ascension of the center of the search region.
         dec (float): Declination of the center of the search region.
         limit (int): Number of random stars to retrieve.
+        min_brightness (int): Minimum brightness of the stars. Lower number means brighter.
     Returns:
         List[StarObject]: A list of star objects for plotting.
     """
@@ -58,6 +58,7 @@ def fetch_api(ra=280, dec=-60, limit=100, min_brightness=21):
         ORDER BY random_index
         OFFSET {offset}
         """
+        print(offset, patch_size, ra, dec, radius_deg.value, min_brightness)
 
         debug("API", f"Starting query {index + 1} for stars...")
 

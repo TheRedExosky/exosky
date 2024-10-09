@@ -7,14 +7,14 @@ import numpy as np
 from astropy.coordinates import Angle
 import astropy.units as u
 
-def spherical_to_cartesian(ra, dec, distance):
+def spherical_to_cartesian(ra: float, dec: float, distance: float):
     """
     Convert `ra` and `dec` coordinates to cartesian.
     """
     ra_rad = np.deg2rad(ra)
     dec_rad = np.deg2rad(dec)
 
-    # Umrechnung in kartesische Koordinaten
+    # Convert to cartesian coordinates
     x = distance * np.cos(dec_rad) * np.cos(ra_rad)
     y = distance * np.cos(dec_rad) * np.sin(ra_rad)
     z = distance * np.sin(dec_rad)
@@ -22,7 +22,7 @@ def spherical_to_cartesian(ra, dec, distance):
     return x, y, z
 
 
-def hms_to_degrees(ra_hms):
+def hms_to_degrees(ra_hms: float):
     """
     Convert RA in HMS format to decimal degrees.
     """
@@ -30,7 +30,7 @@ def hms_to_degrees(ra_hms):
     return ra_angle.deg
 
 
-def dms_to_degrees(dec_dms):
+def dms_to_degrees(dec_dms: float):
     """
     Convert DEC in DMS format to decimal degrees.
     """
@@ -38,17 +38,19 @@ def dms_to_degrees(dec_dms):
     return dec_angle.deg
 
 
-def temperature_to_color(temperature):
+def temperature_to_color(temperature: float):
     """
-    Temperatur [K] zu Lichtwellenlänge [nm]
+    Temperature [K] to light wave length [nm].
     """
-    return 0.002898 / temperature * 1000000000
+    return round(0.002898 / temperature * 1000000000)
 
 
-def wavelength_to_rgb(wavelength):
+def wavelength_to_rgb(wavelength: int):
+    """
+    Light wave length [nm] to tuple of rgb values.
+    """
     gamma = 0.8
     intensity_max = 255
-    r = g = b = 0
     
     if 380 <= wavelength <= 440:
         r = -(wavelength - 440) / (440 - 380)
@@ -75,7 +77,8 @@ def wavelength_to_rgb(wavelength):
         g = 0.0
         b = 0.0
     else:
-        r = g = b = 0.0  # Wavelength outside the visible spectrum
+        # Wavelength outside the visible spectrum
+        r = g = b = 0.0
 
     # Let the intensity fall off near the vision limits
     if 380 <= wavelength <= 420:
@@ -89,4 +92,4 @@ def wavelength_to_rgb(wavelength):
     g = int(intensity_max * (g * factor) ** gamma)
     b = int(intensity_max * (b * factor) ** gamma)
 
-    return (r, g, b)
+    return r, g, b
